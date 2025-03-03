@@ -1,12 +1,12 @@
-# C++ Set Implementation with BST
+# C++ Map Implementation with BST
 
-This project implements a Set container in C++ using a Binary Search Tree (BST) as the underlying data structure. The implementation provides an efficient, ordered collection that maintains unique elements with logarithmic time complexity for most operations.
+This project implements a Map container in C++ using a Binary Search Tree (BST) as the underlying data structure. The implementation provides an ordered collection that maintains key-value pairs with logarithmic time complexity for most operations.
 
 ## Overview
 
-The Set is implemented through a template-based class that maintains elements in sorted order and ensures uniqueness. Key features include:
+The Map is implemented through a template-based class that maintains key-value pairs in sorted order (by key) and ensures key uniqueness. Key features include:
 
-- Template-based implementation supporting any comparable data type
+- Template-based implementation supporting any comparable key type and any value type
 - Red-black tree balancing for guaranteed O(log n) operations
 - Bidirectional iterator implementation
 - Memory-efficient node management
@@ -15,48 +15,59 @@ The Set is implemented through a template-based class that maintains elements in
 
 ## Class Structure
 
-### `set<T>`
+### `map<K, V>`
 
-The main set class template with one parameter:
+The main map class template with two parameters:
 
-- T: Type of element stored in the set
+- K: Type of key used to sort and uniquely identify elements
+- V: Type of mapped value associated with each key
 
 Key components:
 
-- Uses a custom `BST<T>` as the underlying data structure
+- Uses a custom `BST<pair<K,V>>` as the underlying data structure
 - `iterator`: Public bidirectional iterator class
 - Standard container interface methods
 
-### `set<T>::iterator`
+### Constructors
 
-The iterator class provides bidirectional traversal through the set:
+- Default constructor
+- Copy constructor
+- Move constructor
+- Range constructor (from iterators)
+- Initializer list constructor
+
+### `map<K,V>::iterator`
+
+The iterator class provides bidirectional traversal through the map:
 
 - Wraps the underlying BST iterator
 - Supports increment/decrement operations
-- Provides read-only access to elements
+- Provides access to key-value pairs through pair<K,V>
 
-### `BST<T>`
+### `BST<pair<K,V>>`
 
 The underlying Binary Search Tree implementation:
 
-- `BNode`: Internal node structure
-- Red-black tree balancing
+- `BNode`: Internal node structure storing key-value pairs
+- Red-black tree balancing for self-balancing operations
 - Memory management
 - Tree traversal algorithms
 
-## Set Operations
+## Map Operations
 
 The implementation includes several key operations:
 
 ### Core Operations
 
-- `insert()`: Insert elements (maintains uniqueness)
-- `erase()`: Remove elements by iterator or value
-- `find()`: Search for elements
+- `insert()`: Insert key-value pairs (maintains key uniqueness)
+- `operator[]`: Access or insert values by key
+- `at()`: Access values by key with bounds checking
+- `erase()`: Remove elements by iterator, key, or range
+- `find()`: Search for elements by key
 - `clear()`: Delete all elements
-- `swap()`: Exchange two sets
+- `swap()`: Exchange two maps
 - `size()`: Count elements
-- `empty()`: Check if set is empty
+- `empty()`: Check if map is empty
 
 ### Iterator Support
 
@@ -73,61 +84,62 @@ The implementation includes several key operations:
 ## Usage Example
 
 ```cpp
-#include "set.h"
+#include "map.h"
 
-// Create a set with integers
-custom::set<int> s;
+// Create a map with string keys and integer values
+custom::map<string, int> m;
 
 // Insert elements
-s.insert(5);
-s.insert(3);
-s.insert(7);
+m.insert({"apple", 5});
+m.insert({"banana", 3});
+m.insert({"cherry", 7});
+
+// Access using operator[] and at()
+m["date"] = 9;  // Insert new element
+m["apple"] = 6; // Modify existing element
+try {
+    int value = m.at("banana"); // Safe access with bounds checking
+} catch (const std::out_of_range& e) {
+    // Handle key not found
+}
 
 // Find an element
-auto it = s.find(3);
-if (it != s.end())
-    std::cout << "Found: " << *it << std::endl;
+auto it = m.find("banana");
+if (it != m.end())
+    std::cout << "Found: " << it->first << " -> " << it->second << std::endl;
 
-// Iterate through the set
-for (auto it = s.begin(); it != s.end(); ++it)
-    std::cout << *it << " ";  // Output: 3 5 7
+// Iterate through the map
+for (auto it = m.begin(); it != m.end(); ++it)
+    std::cout << it->first << ": " << it->second << std::endl;
 
-// Remove an element
-s.erase(3);
+// Remove elements
+m.erase("apple");           // Remove by key
+auto it2 = m.find("banana");
+if (it2 != m.end())
+    m.erase(it2);          // Remove by iterator
 
 // Check if empty
-if (!s.empty())
-    std::cout << "Set size: " << s.size() << std::endl;
+if (!m.empty())
+    std::cout << "Map size: " << m.size() << std::endl;
 ```
-
-## Testing
-
-The implementation includes comprehensive unit tests that verify:
-
-- Element insertion and deletion
-- Tree balancing
-- Iterator functionality
-- Copy and move operations
-- Memory management
-- Edge cases
 
 ## Files
 
-- `set.h`: Main set implementation
+- `map.h`: Main map implementation
 - `bst.h`: Underlying Binary Search Tree implementation
-- `testSet.h`: Unit tests for set
+- `pair.h`: Pair implementation for key-value storage
+- `testMap.h`: Unit tests for map
 - `testBST.h`: Unit tests for BST
-- `spy.h`: Spy implementation for precise testing measurements
-- `unitTest.h`: Unit testing framework
 
 ## Implementation Details
 
-The set is implemented using a red-black tree to ensure balanced tree operations:
+The map is implemented using a red-black tree to ensure balanced tree operations:
 
 - All operations maintain O(log n) time complexity
-- Elements are stored in sorted order
-- Duplicate elements are not allowed
+- Elements are stored in sorted order by key
+- Duplicate keys are not allowed (values are updated)
 - Iterator invalidation follows standard container rules
+- Exception safety guarantees for element access
 
 ## Authors
 
