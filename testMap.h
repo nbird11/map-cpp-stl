@@ -42,8 +42,8 @@ public:
       //test_constructRange_empty();
       //test_constructRange_one();
       //test_constructRange_standard();
-      //test_destructor_empty();
-      //test_destructor_standard();
+      test_destructor_empty();
+      test_destructor_standard();
 
       // Assign
       //test_assign_emptyToEmpty();
