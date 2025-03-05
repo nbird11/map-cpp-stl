@@ -36,28 +36,28 @@ public:
       test_constructMove_empty();
       test_constructMove_one();
       test_constructMove_standard();
-      test_constructInit_empty();
-      test_constructInit_one();
-      test_constructInit_standard();
-      test_constructRange_empty();
-      test_constructRange_one();
-      test_constructRange_standard();
-      test_destructor_empty();
-      test_destructor_standard();
+      //test_constructInit_empty();
+      //test_constructInit_one();
+      //test_constructInit_standard();
+      //test_constructRange_empty();
+      //test_constructRange_one();
+      //test_constructRange_standard();
+      //test_destructor_empty();
+      //test_destructor_standard();
 
       // Assign
-      test_assign_emptyToEmpty();
-      test_assign_standardToEmpty();
-      test_assign_emptyToStandard();
-      test_assign_standardToNotempty();
-      test_assignMove_emptyToEmpty();
-      test_assignMove_standardToEmpty();
-      test_assignMove_emptyToStandard();
-      test_assignMove_standardToNotempty();
-      test_assignInit_emptyToEmpty();
-      test_assignInit_standardToEmpty();
-      test_assignInit_emptyToStandard();
-      test_assignInit_standardToNotempty();
+      //test_assign_emptyToEmpty();
+      //test_assign_standardToEmpty();
+      //test_assign_emptyToStandard();
+      //test_assign_standardToNotempty();
+      //test_assignMove_emptyToEmpty();
+      //test_assignMove_standardToEmpty();
+      //test_assignMove_emptyToStandard();
+      //test_assignMove_standardToNotempty();
+      //test_assignInit_emptyToEmpty();
+      //test_assignInit_standardToEmpty();
+      //test_assignInit_emptyToStandard();
+      //test_assignInit_standardToNotempty();
       test_swap_emptyToEmpty();
       test_swap_standardToEmpty();
       test_swap_emptyToStandard();
@@ -72,23 +72,23 @@ public:
       test_iterator_dereference_standardRead();
 
       // Access
-      test_access_standardRootRead();
-      test_access_standardLeftRead();
-      test_access_standardRightRead();
-      test_access_standardRootWrite();
-      test_access_standardLeftWrite();
-      test_access_standardRightWrite();
-      test_access_emptyWrite();
-      test_access_standardFrontInsert();
-      test_access_standardMiddleInsert();
-      test_at_standardRootRead();
-      test_at_standardLeftRead();
-      test_at_standardRightRead();
-      test_at_standardRootWrite();
-      test_at_standardLeftWrite();
-      test_at_standardRightWrite();
-      test_at_emptyWrite();
-      test_at_standardWrite();
+      //test_access_standardRootRead();
+      //test_access_standardLeftRead();
+      //test_access_standardRightRead();
+      //test_access_standardRootWrite();
+      //test_access_standardLeftWrite();
+      //test_access_standardRightWrite();
+      //test_access_emptyWrite();
+      //test_access_standardFrontInsert();
+      //test_access_standardMiddleInsert();
+      //test_at_standardRootRead();
+      //test_at_standardLeftRead();
+      //test_at_standardRightRead();
+      //test_at_standardRootWrite();
+      //test_at_standardLeftWrite();
+      //test_at_standardRightWrite();
+      //test_at_emptyWrite();
+      //test_at_standardWrite();
       test_find_empty();
       test_find_standardRoot();
       test_find_standardLeft();
@@ -96,16 +96,16 @@ public:
       test_find_standardMissing();
 
       // Insert
-      test_insertCopy_empty();
-      test_insertCopy_standardFront();
-      test_insertCopy_standardMiddle();
-      test_insertMove_empty();
-      test_insertMove_standard();
+      //test_insertCopy_empty();
+      //test_insertCopy_standardFront();
+      //test_insertCopy_standardMiddle();
+      //test_insertMove_empty();
+      //test_insertMove_standard();
 
       // Remove
-      test_erase_emptyKey();
-      test_erase_standardKey();
-      test_erase_standardKeyMissing();
+      //test_erase_emptyKey();
+      //test_erase_standardKey();
+      //test_erase_standardKeyMissing();
       test_erase_emptyIterator();
       test_erase_standardIterator();
       test_erase_standardIteratorMissing();

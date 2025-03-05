@@ -2,7 +2,7 @@
  * Header:
  *    MAP
  * Summary:
- *    Our custom implementation of a std::map 
+ *    Our custom implementation of a std::map
  *      __      __     _______        __
  *     /  |    /  |   |  _____|   _  / /
  *     `| |    `| |   | |____    (_)/ /
@@ -14,7 +14,7 @@
  *        map                 : A class that represents a map
  *        map::iterator       : An iterator through a map
  * Author
- *    <your names here>
+ *    Nathan Bird, Brock Hoskins
  ************************************************************************/
 
 #pragma once
@@ -39,288 +39,319 @@ namespace custom
  * MAP
  * Create a Map, similar to a Binary Search Tree
  *****************************************************************/
-template <class K, class V>
-class map
-{
-   friend class ::TestMap;
-
-   template <class KK, class VV>
-   friend void swap(map<KK, VV>& lhs, map<KK, VV>& rhs); 
-public:
-   using Pairs = custom::pair<K, V>;
-
-   // 
-   // Construct
-   //
-   map() 
+   template <class K, class V>
+   class map
    {
-   }
-   map(const map &  rhs) 
-   { 
-   }
-   map(map && rhs) 
-   { 
-   }
-   template <class Iterator>
-   map(Iterator first, Iterator last) 
+      friend class ::TestMap;
+
+      template <class KK, class VV>
+      friend void swap(map<KK, VV>& lhs, map<KK, VV>& rhs);
+   public:
+      using Pairs = custom::pair<K, V>;
+
+      // 
+      // Construct
+      //
+      map()
+      {}
+      map(const map& rhs) : bst(rhs.bst)
+      {}
+      map(map&& rhs) : bst(std::move(rhs.bst))
+      {}
+      template <class Iterator>
+      map(Iterator first, Iterator last)
+      {
+         // depend on insert
+      }
+      map(const std::initializer_list<Pairs>& il)
+      {
+         // depend on insert
+      }
+      ~map() // calls bst::destructor which clears itself
+      {}
+
+      //
+      // Assign
+      //
+      map& operator =(const map& rhs)
+      {
+         clear();
+         bst = rhs.bst;
+         return *this;
+      }
+      map& operator =(map&& rhs)
+      {
+         clear();
+         bst = std::move(rhs.bst);
+         return *this;
+      }
+      map& operator =(const std::initializer_list<Pairs>& il)
+      {
+         clear();
+         insert(il);
+         return *this;
+      }
+
+      // 
+      // Iterator
+      //
+      class iterator;
+      iterator begin()
+      {
+         // Explicitly convert bst::iterator to map::iterator
+         return map::iterator(bst.begin());
+      }
+      iterator end()
+      {
+         // Explicitly convert bst::iterator to map::iterator
+         return map::iterator(bst.end());
+      }
+
+      // 
+      // Access
+      //
+      const V& operator [] (const K& k) const;
+      V& operator [] (const K& k);
+      const V& at (const K& k) const;
+      V& at (const K& k);
+      iterator find(const K& k)
+      {
+         auto pair = custom::make_pair(k, V());
+         return map::iterator(bst.find(pair));
+      }
+
+      //
+      // Insert
+      //
+      custom::pair<typename map::iterator, bool> insert(Pairs&& rhs)
+      {
+         auto newPair = bst.insert(std::move(rhs));
+         custom::pair<map::iterator, bool> newerPair = make_pair(map::iterator(newPair.first), newPair.second);
+         return newerPair;
+      }
+      custom::pair<typename map::iterator, bool> insert(const Pairs& rhs)
+      {
+         auto newPair = bst.insert(rhs);
+         custom::pair<map::iterator, bool> newerPair = make_pair(map::iterator(newPair.first), newPair.second);
+         return newerPair;
+      }
+
+      template <class Iterator>
+      void insert(Iterator first, Iterator last)
+      {
+         while (first != last)
+         {
+            insert(*first);
+            ++first;
+         }
+      }
+      void insert(const std::initializer_list <Pairs>& il)
+      {
+         for (const Pairs& pair : il)
+            insert(pair);
+      }
+
+      //
+      // Remove
+      //
+      void clear() noexcept
+      {
+         bst.clear();
+      }
+      size_t erase(const K& k);
+      iterator erase(iterator it);
+      iterator erase(iterator first, iterator last);
+
+      //
+      // Status
+      //
+      bool empty() const noexcept
+      {
+         return size() == 0;
+      }
+      size_t size() const noexcept
+      {
+         return bst.size();
+      }
+
+
+   private:
+
+      // the students DO NOT need to use a nested class
+      BST<pair<K, V>> bst;
+   };
+
+
+   /**********************************************************
+    * MAP ITERATOR
+    * Forward and reverse iterator through a Map, just call
+    * through to BSTIterator
+    *********************************************************/
+   template <typename K, typename V>
+   class map<K, V>::iterator
    {
-   }
-   map(const std::initializer_list <Pairs>& il) 
+      friend class ::TestMap;
+      template <class KK, class VV>
+      friend class custom::map;
+   public:
+      //
+      // Construct
+      //
+      iterator()
+      {}
+      iterator(const typename BST<pair<K, V>>::iterator& rhs) : it(rhs)
+      {}
+      iterator(const iterator& rhs) : it(rhs.it)
+      {}
+
+      //
+      // Assign
+      //
+      iterator& operator =(const iterator& rhs)
+      {
+         it = rhs.it;
+         return *this;
+      }
+
+      //
+      // Compare
+      //
+      bool operator ==(const iterator& rhs) const
+      {
+         return it == rhs.it;
+      }
+      bool operator !=(const iterator& rhs) const
+      {
+         return it != rhs.it;
+      }
+
+      // 
+      // Access
+      //
+      const pair<K, V>& operator *() const
+      {
+         return *it;
+      }
+
+      //
+      // Increment
+      //
+      iterator& operator ++()
+      {
+         ++it;
+         return *this;
+      }
+      iterator operator ++(int postfix)
+      {
+         iterator temp(*this);
+         ++it;
+         return temp;
+      }
+      iterator& operator --()
+      {
+         --it;
+         return *this;
+      }
+      iterator  operator --(int postfix)
+      {
+         iterator temp(*this);
+         --it;
+         return *this;
+      }
+
+   private:
+
+      // Member variable
+      typename BST<pair<K, V>>::iterator it;
+   };
+
+
+   /*****************************************************
+    * MAP :: SUBSCRIPT
+    * Retrieve an element from the map
+    ****************************************************/
+   template <typename K, typename V>
+   V& map<K, V>::operator [](const K& key)
    {
+      return *(new V);
    }
-  ~map()         
+
+   /*****************************************************
+    * MAP :: SUBSCRIPT
+    * Retrieve an element from the map
+    ****************************************************/
+   template <typename K, typename V>
+   const V& map<K, V>::operator [](const K& key) const
    {
+      return *(new V);
    }
 
-   //
-   // Assign
-   //
-   map & operator = (const map & rhs) 
+   /*****************************************************
+    * MAP :: AT
+    * Retrieve an element from the map
+    ****************************************************/
+   template <typename K, typename V>
+   V& map<K, V>::at(const K& key)
    {
-      return *this;
+      return *(new V);
    }
-   map & operator = (map && rhs)
+
+   /*****************************************************
+    * MAP :: AT
+    * Retrieve an element from the map
+    ****************************************************/
+   template <typename K, typename V>
+   const V& map<K, V>::at(const K& key) const
    {
-      return *this;
+      return *(new V);
    }
-   map & operator = (const std::initializer_list <Pairs> & il)
+
+   /*****************************************************
+    * SWAP
+    * Swap two maps
+    ****************************************************/
+   template <typename K, typename V>
+   void swap(map<K, V>& lhs, map<K, V>& rhs)
    {
-      return *this;
-   }
-   
-   // 
-   // Iterator
-   //
-   class iterator;
-   iterator begin() 
-   { 
-      return iterator();
-   }
-   iterator end() 
-   { 
-      return iterator();    
+      std::swap(lhs.bst, rhs.bst);
    }
 
-   // 
-   // Access
-   //
-   const V & operator [] (const K & k) const;
-         V & operator [] (const K & k);
-   const V & at (const K& k) const;
-         V & at (const K& k);
-   iterator find(const K & k)
+   /*****************************************************
+    * ERASE
+    * Erase one element
+    ****************************************************/
+   template <typename K, typename V>
+   size_t map<K, V>::erase(const K& k)
    {
-      return iterator();
+      //pair<K,V> pair(k, V());
+      auto it = find(k);
+      if (it == end())
+         return 0;
+      erase(it);
+      return 1;
    }
 
-   //
-   // Insert
-   //
-   custom::pair<typename map::iterator, bool> insert(Pairs && rhs)
+   /*****************************************************
+    * ERASE
+    * Erase several elements
+    ****************************************************/
+   template <typename K, typename V>
+   typename map<K, V>::iterator map<K, V>::erase(map<K, V>::iterator first, map<K, V>::iterator last)
    {
-      return make_pair(iterator(), true);
+      while (first != last)
+         first = erase(first);
+      return first;
    }
-   custom::pair<typename map::iterator, bool> insert(const Pairs & rhs)
+
+   /*****************************************************
+    * ERASE
+    * Erase one element
+    ****************************************************/
+   template <typename K, typename V>
+   typename map<K, V>::iterator map<K, V>::erase(map<K, V>::iterator it)
    {
-      return make_pair(iterator(), true);
+      return map::iterator(bst.erase(it.it));
    }
-
-   template <class Iterator>
-   void insert(Iterator first, Iterator last)
-   {
-   }
-   void insert(const std::initializer_list <Pairs>& il)
-   {
-   }
-
-   //
-   // Remove
-   //
-   void clear() noexcept
-   {
-   }
-   size_t erase(const K& k);
-   iterator erase(iterator it);
-   iterator erase(iterator first, iterator last);
-
-   //
-   // Status
-   //
-   bool empty() const noexcept 
-   { 
-      return true; 
-   }
-   size_t size() const noexcept 
-   { 
-      return 99;
-   }
-
-
-private:
-
-   // the students DO NOT need to use a nested class
-   BST < pair <K, V >> bst;
-};
-
-
-/**********************************************************
- * MAP ITERATOR
- * Forward and reverse iterator through a Map, just call
- * through to BSTIterator
- *********************************************************/
-template <typename K, typename V>
-class map <K, V> :: iterator
-{
-   friend class ::TestMap;
-   template <class KK, class VV>
-   friend class custom::map; 
-public:
-   //
-   // Construct
-   //
-   iterator()
-   {
-   }
-   iterator(const typename BST < pair <K, V> > :: iterator & rhs)
-   { 
-   }
-   iterator(const iterator & rhs) 
-   { 
-   }
-
-   //
-   // Assign
-   //
-   iterator & operator = (const iterator & rhs)
-   {
-      return *this;
-   }
-
-   //
-   // Compare
-   //
-   bool operator == (const iterator & rhs) const 
-   { 
-      return true;
-   }
-   bool operator != (const iterator & rhs) const 
-   { 
-      return true;
-   }
-
-   // 
-   // Access
-   //
-   const pair <K, V> & operator * () const
-   {
-      return *(new pair<K, V>);
-   }
-
-   //
-   // Increment
-   //
-   iterator & operator ++ ()
-   {
-      return *this;
-   }
-   iterator operator ++ (int postfix)
-   {
-      return *this;
-   }
-   iterator & operator -- ()
-   {
-      return *this;
-   }
-   iterator  operator -- (int postfix)
-   {
-      return *this;
-   }
-
-private:
-
-   // Member variable
-   typename BST < pair <K, V >>  :: iterator it;   
-};
-
-
-/*****************************************************
- * MAP :: SUBSCRIPT
- * Retrieve an element from the map
- ****************************************************/
-template <typename K, typename V>
-V& map <K, V> :: operator [] (const K& key)
-{
-   return *(new V);
-}
-
-/*****************************************************
- * MAP :: SUBSCRIPT
- * Retrieve an element from the map
- ****************************************************/
-template <typename K, typename V>
-const V& map <K, V> :: operator [] (const K& key) const
-{
-   return *(new V);
-}
-
-/*****************************************************
- * MAP :: AT
- * Retrieve an element from the map
- ****************************************************/
-template <typename K, typename V>
-V& map <K, V> ::at(const K& key)
-{
-   return *(new V);
-}
-
-/*****************************************************
- * MAP :: AT
- * Retrieve an element from the map
- ****************************************************/
-template <typename K, typename V>
-const V& map <K, V> ::at(const K& key) const
-{
-   return *(new V);
-}
-
-/*****************************************************
- * SWAP
- * Swap two maps
- ****************************************************/
-template <typename K, typename V>
-void swap(map <K, V>& lhs, map <K, V>& rhs)
-{
-}
-
-/*****************************************************
- * ERASE
- * Erase one element
- ****************************************************/
-template <typename K, typename V>
-size_t map<K, V>::erase(const K& k)
-{
-   return size_t(99);
-}
-
-/*****************************************************
- * ERASE
- * Erase several elements
- ****************************************************/
-template <typename K, typename V>
-typename map<K, V>::iterator map<K, V>::erase(map<K, V>::iterator first, map<K, V>::iterator last)
-{
-   return iterator();
-}
-
-/*****************************************************
- * ERASE
- * Erase one element
- ****************************************************/
-template <typename K, typename V>
-typename map<K, V>::iterator map<K, V>::erase(map<K, V>::iterator it)
-{
-   return iterator();
-}
 
 }; //  namespace custom
 
