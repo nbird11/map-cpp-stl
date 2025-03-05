@@ -36,28 +36,28 @@ public:
       test_constructMove_empty();
       test_constructMove_one();
       test_constructMove_standard();
-      //test_constructInit_empty();
-      //test_constructInit_one();
-      //test_constructInit_standard();
-      //test_constructRange_empty();
-      //test_constructRange_one();
-      //test_constructRange_standard();
+      test_constructInit_empty();
+      test_constructInit_one();
+      test_constructInit_standard();
+      test_constructRange_empty();
+      test_constructRange_one();
+      test_constructRange_standard();
       test_destructor_empty();
       test_destructor_standard();
 
       // Assign
-      //test_assign_emptyToEmpty();
-      //test_assign_standardToEmpty();
-      //test_assign_emptyToStandard();
-      //test_assign_standardToNotempty();
-      //test_assignMove_emptyToEmpty();
-      //test_assignMove_standardToEmpty();
-      //test_assignMove_emptyToStandard();
-      //test_assignMove_standardToNotempty();
-      //test_assignInit_emptyToEmpty();
-      //test_assignInit_standardToEmpty();
-      //test_assignInit_emptyToStandard();
-      //test_assignInit_standardToNotempty();
+      test_assign_emptyToEmpty();
+      test_assign_standardToEmpty();
+      test_assign_emptyToStandard();
+      test_assign_standardToNotempty();  // 
+      test_assignMove_emptyToEmpty();
+      test_assignMove_standardToEmpty();
+      test_assignMove_emptyToStandard();
+      test_assignMove_standardToNotempty();
+      test_assignInit_emptyToEmpty();
+      test_assignInit_standardToEmpty();
+      test_assignInit_emptyToStandard();
+      test_assignInit_standardToNotempty();
       test_swap_emptyToEmpty();
       test_swap_standardToEmpty();
       test_swap_emptyToStandard();
@@ -842,6 +842,7 @@ public:
       //   +----+   +----+   +----+
       //   | 30 | - | 50 | - | 70 |
       //   +----+   +----+   +----+
+      // 
       //        (50)
       //    +-----+-----+
       //  (30)        (70)
@@ -852,6 +853,7 @@ public:
       //   | 40 | - | 60 | 
       //   +----+   +----+ 
       //     p40      p60
+      // 
       //        (40)
       //          +-----+
       //              (60)
@@ -875,7 +877,7 @@ public:
       assertUnit(Spy::numAlloc() == 1);       // allocate    [30]
       assertUnit(Spy::numCopy() == 1);        // copy-create [30]
       assertUnit(Spy::numAssign() == 2);      // assign [50][50]
-      assertUnit(Spy::numDestructor() == 0); 
+      assertUnit(Spy::numDestructor() == 0);
       assertUnit(Spy::numDelete() == 0);
       assertUnit(Spy::numEquals() == 0);
       assertUnit(Spy::numLessthan() == 0);

@@ -61,11 +61,11 @@ namespace custom
       template <class Iterator>
       map(Iterator first, Iterator last)
       {
-         // depend on insert
+         insert(first, last);
       }
       map(const std::initializer_list<Pairs>& il)
       {
-         // depend on insert
+         *this = il;
       }
       ~map() // calls bst::destructor which clears itself
       {}
@@ -75,7 +75,6 @@ namespace custom
       //
       map& operator =(const map& rhs)
       {
-         clear();
          bst = rhs.bst;
          return *this;
       }
