@@ -126,15 +126,13 @@ namespace custom
       //
       custom::pair<typename map::iterator, bool> insert(Pairs&& rhs)
       {
-         auto newPair = bst.insert(std::move(rhs));
-         custom::pair<map::iterator, bool> newerPair = make_pair(map::iterator(newPair.first), newPair.second);
-         return newerPair;
+         std::pair<typename BST<Pairs>::iterator, bool> itBSTPair = bst.insert(std::move(rhs));
+         return custom::make_pair(map::iterator(itBSTPair.first), itBSTPair.second);
       }
       custom::pair<typename map::iterator, bool> insert(const Pairs& rhs)
       {
-         auto newPair = bst.insert(rhs);
-         custom::pair<map::iterator, bool> newerPair = make_pair(map::iterator(newPair.first), newPair.second);
-         return newerPair;
+         std::pair<typename BST<Pairs>::iterator, bool> itBSTPair = bst.insert(rhs);
+         return custom::make_pair(map::iterator(itBSTPair.first), itBSTPair.second);
       }
 
       template <class Iterator>
