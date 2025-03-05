@@ -96,16 +96,16 @@ public:
       test_find_standardMissing();
 
       // Insert
-      //test_insertCopy_empty();
-      //test_insertCopy_standardFront();
-      //test_insertCopy_standardMiddle();
-      //test_insertMove_empty();
-      //test_insertMove_standard();
+      test_insertCopy_empty();
+      test_insertCopy_standardFront();
+      test_insertCopy_standardMiddle();
+      test_insertMove_empty();
+      test_insertMove_standard();
 
       // Remove
-      //test_erase_emptyKey();
-      //test_erase_standardKey();
-      //test_erase_standardKeyMissing();
+      test_erase_emptyKey();
+      test_erase_standardKey();
+      test_erase_standardKeyMissing();
       test_erase_emptyIterator();
       test_erase_standardIterator();
       test_erase_standardIteratorMissing();

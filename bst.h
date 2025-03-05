@@ -498,6 +498,9 @@ namespace custom
       {
          // Hook up child to parent
          pDelete->pLeft->pParent = pDelete->pParent;
+         // Update root pointer if pDelete was root.
+         if (!pDelete->pLeft->pParent)
+            root = pDelete->pLeft;
          // Hook up parent to child: left
          if (pDelete->pParent && pDelete->isLeftChild(pDelete->pParent))
             pDelete->pParent->pLeft = pDelete->pLeft;
@@ -514,6 +517,9 @@ namespace custom
       {
          // Hook up child to parent
          pDelete->pRight->pParent = pDelete->pParent;
+         // Update root pointer if pDelete was root.
+         if (!pDelete->pRight->pParent)
+            root = pDelete->pRight;
          // Hook up parent to child: left
          if (pDelete->pParent && pDelete->isLeftChild(pDelete->pParent))
             pDelete->pParent->pLeft = pDelete->pRight;

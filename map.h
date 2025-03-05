@@ -116,8 +116,9 @@ namespace custom
       V& at (const K& k);
       iterator find(const K& k)
       {
-         auto pair = custom::make_pair(k, V());
-         return map::iterator(bst.find(pair));
+         // custom::pair has a constructor that just takes first/key
+         pair<K, V> searchPair(k);
+         return map::iterator(bst.find(searchPair));
       }
 
       //
