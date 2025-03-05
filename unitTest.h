@@ -17,6 +17,7 @@
 #undef assertEmptyFixture
 
 #undef logUnit
+#undef logImmediate
 
 #define assertUnit(condition)     assertUnitParameters(condition, #condition, __LINE__, __FUNCTION__)
 #define assertIndirect(condition) assertUnitParametersIndirect(condition, #condition, line, function, __LINE__, __FUNCTION__)
@@ -25,6 +26,9 @@
 #define assertEmptyFixture(x)     assertEmptyFixtureParameters(   x, __LINE__, __FUNCTION__)
 
 #define logUnit(x)                logParameters(x, #x, __LINE__, __FUNCTION__)
+#define logImmediate(x)           std::cerr << "\t" << __FUNCTION__ << "():\n"  \
+                                  << "\t\tline:" << __LINE__ << " log: "        \
+                                  << #x << " = " << x << std::endl;
 
 #include <iostream>  // for std::cerr
 #include <string>    // for std::string
@@ -181,7 +185,7 @@ protected:
       std::string sFunc(func);
       std::string sXExpr(valueToString(xExpr));
       std::string sX(valueToString(x));
-      Log log{sXExpr+": "+sX, line};
+      Log log{sXExpr+" = "+sX, line};
       tests[sFunc].push_back(log);
    }
    
