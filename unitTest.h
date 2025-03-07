@@ -17,7 +17,8 @@
 #undef assertEmptyFixture
 
 #undef logUnit
-#undef logImmediate
+#undef logInfo
+#undef logNoInfo
 
 #define assertUnit(condition)     assertUnitParameters(condition, #condition, __LINE__, __FUNCTION__)
 #define assertIndirect(condition) assertUnitParametersIndirect(condition, #condition, line, function, __LINE__, __FUNCTION__)
@@ -26,9 +27,10 @@
 #define assertEmptyFixture(x)     assertEmptyFixtureParameters(   x, __LINE__, __FUNCTION__)
 
 #define logUnit(x)                logParameters(x, #x, __LINE__, __FUNCTION__)
-#define logImmediate(x)           std::cerr << "\t" << __FUNCTION__ << "():\n"  \
-                                  << "\t\tline:" << __LINE__ << " log: "        \
-                                  << #x << " = " << x << std::endl;
+#define logInfo(x)                std::cerr << "\t" << __FUNCTION__ << "():\n"      \
+                                            << "\t\tline:" << __LINE__ << " log: "  \
+                                            << #x << " = " << x << std::endl;
+#define logNoInfo(x)              std::cerr << #x << " = " << x << std::endl;
 
 #include <iostream>  // for std::cerr
 #include <string>    // for std::string
