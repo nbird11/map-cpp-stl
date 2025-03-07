@@ -19,8 +19,11 @@
 
 #pragma once
 
-#include "pair.h"     // for pair
-#include "bst.h"      // no nested class necessary for this assignment
+#include "pair.h"            // for custom::pair
+#include <utility>           // for std::pair
+#include "bst.h"             // for custom::bst
+#include <initializer_list>  // for std::initializer_list
+#include <stdexcept>         // for std::out_of_range
 
 #ifndef debug
 #ifdef DEBUG
@@ -47,7 +50,8 @@ namespace custom
       template <class KK, class VV>
       friend void swap(map<KK, VV>& lhs, map<KK, VV>& rhs);
    public:
-      using Pairs = custom::pair<K, V>;
+      using Pair = custom::pair<K, V>;
+      using BST = BST<Pair>;
 
       // 
       // Construct
@@ -63,7 +67,7 @@ namespace custom
       {
          insert(first, last);
       }
-      map(const std::initializer_list<Pairs>& il)
+      map(const std::initializer_list<Pair>& il)
       {
          *this = il;
       }
@@ -84,7 +88,7 @@ namespace custom
          bst = std::move(rhs.bst);
          return *this;
       }
-      map& operator =(const std::initializer_list<Pairs>& il)
+      map& operator =(const std::initializer_list<Pair>& il)
       {
          clear();
          insert(il);
@@ -123,14 +127,14 @@ namespace custom
       //
       // Insert
       //
-      custom::pair<typename map::iterator, bool> insert(Pairs&& rhs)
+      custom::pair<typename map::iterator, bool> insert(Pair&& rhs)
       {
-         std::pair<typename BST<Pairs>::iterator, bool> itBSTPair = bst.insert(std::move(rhs));
+         std::pair<typename BST::iterator, bool> itBSTPair = bst.insert(std::move(rhs), /*keepUnique: */true);
          return custom::make_pair(map::iterator(itBSTPair.first), itBSTPair.second);
       }
-      custom::pair<typename map::iterator, bool> insert(const Pairs& rhs)
+      custom::pair<typename map::iterator, bool> insert(const Pair& rhs)
       {
-         std::pair<typename BST<Pairs>::iterator, bool> itBSTPair = bst.insert(rhs);
+         std::pair<typename BST::iterator, bool> itBSTPair = bst.insert(rhs, /*keepUnique: */true);
          return custom::make_pair(map::iterator(itBSTPair.first), itBSTPair.second);
       }
 
@@ -143,9 +147,9 @@ namespace custom
             ++first;
          }
       }
-      void insert(const std::initializer_list <Pairs>& il)
+      void insert(const std::initializer_list<Pair>& il)
       {
-         for (const Pairs& pair : il)
+         for (const Pair& pair : il)
             insert(pair);
       }
 
@@ -156,7 +160,7 @@ namespace custom
       {
          bst.clear();
       }
-      size_t erase(const K& k);
+      size_t   erase(const K& k);
       iterator erase(iterator it);
       iterator erase(iterator first, iterator last);
 
@@ -176,7 +180,7 @@ namespace custom
    private:
 
       // the students DO NOT need to use a nested class
-      BST<pair<K, V>> bst;
+      BST bst;
    };
 
 
@@ -197,7 +201,7 @@ namespace custom
       //
       iterator()
       {}
-      iterator(const typename BST<pair<K, V>>::iterator& rhs) : it(rhs)
+      iterator(const typename BST::iterator& rhs) : it(rhs)
       {}
       iterator(const iterator& rhs) : it(rhs.it)
       {}
@@ -250,7 +254,7 @@ namespace custom
          --it;
          return *this;
       }
-      iterator  operator --(int postfix)
+      iterator operator --(int postfix)
       {
          iterator temp(*this);
          --it;
@@ -260,7 +264,7 @@ namespace custom
    private:
 
       // Member variable
-      typename BST<pair<K, V>>::iterator it;
+      typename BST::iterator it;
    };
 
 
@@ -271,7 +275,10 @@ namespace custom
    template <typename K, typename V>
    V& map<K, V>::operator [](const K& key)
    {
-      return *(new V);
+      Pair pair(key);
+      std::pair<typename BST::iterator, bool> returnValue = bst.insert(pair, /*keepUnique: */true);
+      typename BST::iterator itBST = returnValue.first;
+      return itBST.pNode->data.second;
    }
 
    /*****************************************************
@@ -281,7 +288,12 @@ namespace custom
    template <typename K, typename V>
    const V& map<K, V>::operator [](const K& key) const
    {
-      return *(new V);
+      Pair pair(key);
+      typename BST::iterator itBST = bst.find(pair);
+      if (itBST != bst.end())
+         return itBST.pNode->data.second;
+      else
+         return pair.second;
    }
 
    /*****************************************************
@@ -291,17 +303,25 @@ namespace custom
    template <typename K, typename V>
    V& map<K, V>::at(const K& key)
    {
-      return *(new V);
+      iterator at(find(key));
+      if (at != end())
+         // can't use `*at` because there is only a const version, need non-const
+         return at.it.pNode->data.second;
+      throw std::out_of_range("invalid map<K, T> key");
    }
 
    /*****************************************************
-    * MAP :: AT
+    * MAP :: AT READ ONLY
     * Retrieve an element from the map
     ****************************************************/
    template <typename K, typename V>
    const V& map<K, V>::at(const K& key) const
    {
-      return *(new V);
+      iterator at(find(key));
+      if (at != end())
+         // `map::iterator::operator *()` returns `const pair&`, therefore `pair.second` will be `const V&`
+         return at->second; // same as `(*at).second`
+      throw std::out_of_range("invalid map<K, T> key");
    }
 
    /*****************************************************
@@ -321,12 +341,10 @@ namespace custom
    template <typename K, typename V>
    size_t map<K, V>::erase(const K& k)
    {
-      //pair<K,V> pair(k, V());
-      auto it = find(k);
-      if (it == end())
-         return 0;
-      erase(it);
-      return 1;
+      iterator it(find(k));
+      if (it != end())
+         return erase(it), 1;
+      return 0;
    }
 
    /*****************************************************
