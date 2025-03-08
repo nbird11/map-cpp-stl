@@ -343,7 +343,10 @@ namespace custom
    {
       iterator it(find(k));
       if (it != end())
-         return erase(it), 1;
+      {
+         erase(it);
+         return 1;
+      }
       return 0;
    }
 
